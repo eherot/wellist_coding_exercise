@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+# Installs Ruby as the unprivileged Ubuntu user
+
+# Exit if any subcommand fails
+set -e
+
+# Install rbenv
+if ! [ -x ~/.rbenv/bin/rbenv ] ; then
+  git clone https://github.com/rbenv/rbenv.git ~/.rbenv
+  git clone https://github.com/rbenv/ruby-build.git ~/.rbenv/plugins/ruby-build
+  echo 'export PATH="~/.rbenv/bin:$PATH"' >> ~/.bash_profile
+  echo 'export PATH="~/.rbenv/shims:$PATH"' >> ~/.bash_profile
+fi
+
+# Install the correct ruby version
+cd /vagrant
+~/.rbenv/bin/rbenv install --verbose
+
+# Install gems
+~/.rbenv/shims/gem install bundler
+~/.rbenv/shims/bundle install
+~/.rbenv/shims/gem install foreman

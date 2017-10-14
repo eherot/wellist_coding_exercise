@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+
+# Provisions the environment for running the rails app. Installs
+# Ruby and Postgres
+
+# Exit if any subcommand fails
+set -e
+
+# Install basic dependencies
+apt-get install --yes git build-essential libssl-dev libreadline-dev zlib1g-dev
+
+
+# PostgreSQL
+
+# Add the Postgres APT repository
+echo "deb http://apt.postgresql.org/pub/repos/apt/ xenial-pgdg main" > /etc/apt/sources.list.d/pgdg.list
+
+# Install the signing key
+wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | \
+    sudo apt-key add -
+sudo apt-get update
+
+# Install Postgres
+apt-get install --yes postgresql-9.5 libpq-dev
+
+# Set up a ubuntu postgres user
+if ! su ubuntu -c 'psql code_exercise_development --user ubuntu --command "SELECT 1;" 2> /dev/null' ; then
+  su postgres -c 'createuser ubuntu --createdb'
+  su postgres -c 'createdb -O ubuntu code_exercise_development'
+  su postgres -c 'createdb -O ubuntu code_exercise_test'
+fi
+
+
+# Ruby
+
+# Switch to unprivileged ubuntu user and run Ruby installation script
+su -c /vagrant/bin/provision_ruby ubuntu

@@ -1,0 +1,19 @@
+default: &default
+  adapter: postgresql
+  database: wellist
+  encoding: utf8
+  min_messages: WARNING
+  pool: 5
+  timeout: 5000
+
+  username: <%= ENV['PGUSER'] || `whoami` %>
+  host: <%= ENV['DB_PORT_5432_TCP_ADDR'] %>
+  port: <%= ENV['DB_PORT_5432_TCP_PORT'] %>
+
+development:
+  <<: *default
+  database: code_exercise_development
+    
+test:
+  <<: *default
+  database: code_exercise_test
